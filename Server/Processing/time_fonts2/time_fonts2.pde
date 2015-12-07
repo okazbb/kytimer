@@ -11,6 +11,10 @@ int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
 boolean DEBUG = true;
 
+int time_m = 0;
+int time_s = 0;
+int time_ms = 0;
+    
 void setup(){
   background(BG_COLOR);
   size(1366, 768);
@@ -24,11 +28,7 @@ void setup(){
 }
 
 void draw(){
-  if(keyPressed){
-    int time_m = 0;
-    int time_s = 0;
-    int time_ms = 0;
-    
+  if(keyPressed){    
     //START
     if(key == 'i'){
       queue.add(millis());
