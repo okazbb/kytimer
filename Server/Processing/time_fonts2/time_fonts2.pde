@@ -10,11 +10,16 @@ String FONT_NAME = "Osaka";
 int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
 boolean DEBUG = true;
+boolean USE_WATCH = true;
 
 int time_m = 0;
 int time_s = 0;
 int time_ms = 0;
-    
+
+int start;
+
+int rend_time;
+
 void setup(){
   background(BG_COLOR);
   size(1366, 768);
@@ -27,19 +32,31 @@ void setup(){
   //myPort = new Serial(this, "/dev/tty.usbmodem1411", 9600);
 }
 
+
 void draw(){
-  if(keyPressed){    
-    //START
-    if(key == 'i'){
+  if(USE_WATCH){
+    int ms = millis();
+    if(ms - rend_time > 80){
+      rend_time = ms;
+      if(queue.size() > 0){
+        drawWatch();
+      }
+    }
+  }
+}
+
+void mousePressed(){
+  switch(mouseButton){
+    case LEFT: //START
       queue.add(millis());
       delay(100);
-    }
+      break;
     
-    //GOAL
-    if(key == 'o'){ 
-      int goal = millis();
+    case RIGHT: //GOAL 
+      
       try{
-        int start = queue.remove();
+        start = queue.remove();
+        int goal = millis();
         int millisecond = goal - start;
         int second = millisecond / 1000;
         
@@ -56,15 +73,59 @@ void draw(){
       } catch(Exception e){
         time_m = time_s = time_ms = 0;
       }
+      
       delay(100);
-    }
-    drawTime(time_m, time_s, time_ms, queue.size());
+      break;
+  }
+  drawTime(time_m, time_s, time_ms, queue.size());
+  drawWatch();
+}
+
+void drawWatch(int goal){
+  
+  if(goal == 0){
+    goal = millis();
+  }
+  
+  if(queue.size() > 0){
+      start = queue.element();
+  }
+  
+  
+  try{
+    
+    int millisecond = goal - start;
+    int second = millisecond / 1000;
+    
+    int w_time_m = second / 60;
+    int w_time_s = second % 60;
+    int w_time_ms = millisecond % 1000;
+    
+    fill(0,0,0);
+    rect(
+    20,
+    height / 1.4,
+    250,
+    250
+    );
+   
+    fill(255,255,255);
+    textAlign(LEFT);
+    int fontSize = height / 18;
+    PFont fn2 = createFont(FONT_NAME, fontSize);
+    textFont(fn2);
+    text(
+       nf(w_time_m, 2) + ":" + nf(w_time_s, 2) + "." + nf(w_time_ms, 3),
+       20,
+       height / 1.2
+     );
+  } catch(Exception e) {
+    
   }
 }
 
 void drawTime(int time_m, int time_s, int time_ms, int running){
   background(#000000);
-  
   
   float fontSize = height / 2.2;
   PFont fn = createFont(FONT_NAME, fontSize);
@@ -86,6 +147,7 @@ void drawTime(int time_m, int time_s, int time_ms, int running){
     height / 1.1 
   );
   
+  //running
   textAlign(LEFT);
   fontSize = height / 18;
   PFont fn2 = createFont(FONT_NAME, fontSize);
@@ -95,4 +157,5 @@ void drawTime(int time_m, int time_s, int time_ms, int running){
     20,
     height / 1.7
   );
+  
 }
