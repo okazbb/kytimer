@@ -17,8 +17,10 @@ int time_s = 0;
 int time_ms = 0;
 
 int start;
-
+int goal;
+int millisecond;
 int rend_time;
+int second;
 
 void setup(){
   background(BG_COLOR);
@@ -39,6 +41,8 @@ void draw(){
     if(ms - rend_time > 80){
       rend_time = ms;
       if(queue.size() > 0){
+        start = queue.element();
+        goal = ms;
         drawWatch();
       }
     }
@@ -56,9 +60,9 @@ void mousePressed(){
       
       try{
         start = queue.remove();
-        int goal = millis();
-        int millisecond = goal - start;
-        int second = millisecond / 1000;
+        goal = millis();
+        millisecond = goal - start;
+        second = millisecond / 1000;
         
         if(DEBUG){
           println("start:" + str(start));
@@ -81,22 +85,10 @@ void mousePressed(){
   drawWatch();
 }
 
-void drawWatch(int goal){
-  
-  if(goal == 0){
-    goal = millis();
-  }
-  
-  if(queue.size() > 0){
-      start = queue.element();
-  }
-  
-  
-  try{
-    
-    int millisecond = goal - start;
-    int second = millisecond / 1000;
-    
+void drawWatch(){
+
+    millisecond = goal - start;
+    second = millisecond / 1000;
     int w_time_m = second / 60;
     int w_time_s = second % 60;
     int w_time_ms = millisecond % 1000;
@@ -119,9 +111,7 @@ void drawWatch(int goal){
        20,
        height / 1.2
      );
-  } catch(Exception e) {
-    
-  }
+ 
 }
 
 void drawTime(int time_m, int time_s, int time_ms, int running){
