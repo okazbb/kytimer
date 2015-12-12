@@ -59,7 +59,7 @@ void start_s(String ms_string){
   } else {
     int l_ms = int(ms_string);
     queue.add(l_ms);
-    println("START" + l_ms);
+    //println("START" + l_ms);
   }
   //drawTime(time_m, time_s, time_ms, queue.size());
   //drawWatch();
@@ -72,7 +72,7 @@ void goal_s(String ms_string){
   } else {
     int l_ms = int(ms_string);
     goal = int(l_ms);
-    println("GOAL" + l_ms);
+    //println("GOAL" + l_ms);
   }
   
   try{
@@ -80,11 +80,11 @@ void goal_s(String ms_string){
     millisecond = goal - start;
     second = millisecond / 1000;
     
-    if(DEBUG){
-      println("start:" + str(start));
-      println("goal:" + str(goal));
-      println("realtime:" + str(millisecond));
-    }
+    //if(DEBUG){
+    //  println("start:" + str(start));
+    //  println("goal:" + str(goal));
+    //  println("realtime:" + str(millisecond));
+    //}
     
     time_m = second / 60;
     time_s = second % 60;
@@ -101,13 +101,10 @@ void serialEvent(Serial p) {
   String s = p.readStringUntil(10);  
   if (s != null) {
     String t = trim(s);
-    
-    
     String cmd = t.substring(0, 1);
     String val = t.substring(1);
     
     //println(cmd);
-    
     if(cmd.equals("S")){
       start_s(val);
       //println("start" + val);
