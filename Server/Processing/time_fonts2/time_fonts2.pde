@@ -15,7 +15,7 @@ String FONT_NAME = "Osaka";
 int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
 boolean DEBUG = false;
-boolean USE_WATCH = false;
+boolean USE_WATCH = true;
 boolean USE_MOUSE = true;
 int DISPLAY_DELAY_TIME = 150;
 int START_DELAY_TIME = 2000;
@@ -33,6 +33,8 @@ int goal;
 int millisecond;
 int second;
 
+int w_ms = 0;
+
 int draw_ms = millis();
 int start_ms = 0;
 int goal_ms = 0;
@@ -43,10 +45,10 @@ void setup(){
   queue = new ArrayDeque<Integer>();
   
   background(BG_COLOR);
-  //size(1366, 768);
+  size(1366, 768);
   //size(1280, 800);
   //size(1440, 900);
-  size(640, 480);
+  //size(640, 480);
   //size(displayWidth, displayHeight);
   drawTime(0, 0, 0, 0);
   
@@ -133,6 +135,9 @@ void serialEvent(Serial p) {
     } else if(command.equals("G")){
       goal_sw(time_val);
       //println("goal" + val);
+      
+    } else if(command.equals("T")){
+      w_ms = int(time_val);
     }
   }
 }
@@ -155,13 +160,19 @@ void mousePressed(){
 void drawWatch(int now){
 
   if(!USE_WATCH) return;
-  if(queue.size() < 1) return;
-   println(now + " - " + queue.element() + " = " + (now - queue.element()));
-   int lms = now - queue.element();
-   int ls = lms / 1000;
+  
+  int l_ms;
+  if(queue.size() > 0){
+     l_ms = w_ms - queue.element(); 
+  } else {
+    l_ms = millisecond;
+  }
+   //println(now + " - " + queue.element() + " = " + (now - queue.element()));
+   
+   int ls = l_ms / 1000;
    int w_time_m = ls / 60;
    int w_time_s = ls % 60;
-   int w_time_ms = lms % 1000;
+   int w_time_ms = l_ms % 1000;
     
    fill(0,0,0);
    rect(
