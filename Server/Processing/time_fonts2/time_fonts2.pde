@@ -15,7 +15,7 @@ String FONT_NAME = "Osaka";
 int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
 boolean DEBUG = false;
-boolean USE_WATCH = true;
+boolean USE_WATCH = false;
 boolean USE_MOUSE = true;
 int DISPLAY_DELAY_TIME = 150;
 int START_DELAY_TIME = 2000;
@@ -39,14 +39,14 @@ int goal_ms = 0;
 
 void setup(){
   
-  //myPort = new Serial(this, "/dev/tty.usbmodem411", 9600);
+  myPort = new Serial(this, "/dev/tty.usbmodem411", 9600);
   queue = new ArrayDeque<Integer>();
   
   background(BG_COLOR);
-  size(1366, 768);
+  //size(1366, 768);
   //size(1280, 800);
   //size(1440, 900);
-  //size(640, 480);
+  size(640, 480);
   //size(displayWidth, displayHeight);
   drawTime(0, 0, 0, 0);
   
@@ -59,7 +59,7 @@ void draw(){
   draw_ms = ms;
   
   drawTime(time_m, time_s, time_ms, queue.size());
-  drawWatch();
+  drawWatch(ms);
   
 }
 
@@ -82,7 +82,7 @@ void start_sw(String ms_string){
 }
 
 void goal_sw(String ms_string){
-println("G");
+
   int ms = millis();
   if(goal_ms + GOAL_DELAY_TIME > ms) return;
   goal_ms = ms;
@@ -152,20 +152,16 @@ void mousePressed(){
   }
 }
 
-void drawWatch(){
+void drawWatch(int now){
 
   if(!USE_WATCH) return;
-  
-   if(queue.size() > 0){
-     start = queue.element();
-     goal = draw_ms;
-   }
-   
-   millisecond = goal - start;
-   second = millisecond / 1000;
-   int w_time_m = second / 60;
-   int w_time_s = second % 60;
-   int w_time_ms = millisecond % 1000;
+  if(queue.size() < 1) return;
+   println(now + " - " + queue.element() + " = " + (now - queue.element()));
+   int lms = now - queue.element();
+   int ls = lms / 1000;
+   int w_time_m = ls / 60;
+   int w_time_s = ls % 60;
+   int w_time_ms = lms % 1000;
     
    fill(0,0,0);
    rect(
