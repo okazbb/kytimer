@@ -14,12 +14,13 @@ Queue<Integer> queue;
 String FONT_NAME = "Osaka";
 int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
-boolean DEBUG = true;
+boolean DEBUG = false;
 boolean USE_WATCH = true;
 boolean USE_MOUSE = true;
 int DISPLAY_DELAY_TIME = 180;
 int START_DELAY_TIME = 3000;
 int GOAL_DELAY_TIME = 3000;
+int SERIAL_PORT_NO = 0;
 
 /**
  *
@@ -40,17 +41,18 @@ int start_ms = 0;
 int goal_ms = 0;
 
 void setup(){
-  if(DEBUG) println(Serial.list());
   
-  //myPort = new Serial(this, "/dev/tty.usbmodem411", 9600);
+  String[] port_list = Serial.list();
+  if(DEBUG) println(port_list);
+  myPort = new Serial(this, port_list[SERIAL_PORT_NO], 9600);
+  
   queue = new ArrayDeque<Integer>();
   
   background(BG_COLOR);
-  size(1366, 768);
-  //size(1280, 800);
-  //size(1440, 900);
-  //size(640, 480);
-  //size(displayWidth, displayHeight);
+  //size(1366, 768);
+  ////size(1280, 800);
+  ////size(1440, 900);
+  size(displayWidth, displayHeight);
   drawTime(0, 0, 0, 0);
   
 }
