@@ -14,12 +14,12 @@ Queue<Integer> queue;
 String FONT_NAME = "Osaka";
 int FONT_COLOR = #FFFFFF;
 int BG_COLOR = #000000;
-boolean DEBUG = false;
+boolean DEBUG = true;
 boolean USE_WATCH = true;
 boolean USE_MOUSE = true;
-int DISPLAY_DELAY_TIME = 150;
-int START_DELAY_TIME = 2000;
-int GOAL_DELAY_TIME = 2000;
+int DISPLAY_DELAY_TIME = 180;
+int START_DELAY_TIME = 3000;
+int GOAL_DELAY_TIME = 3000;
 
 /**
  *
@@ -32,7 +32,7 @@ int start;
 int goal;
 int millisecond;
 int second;
-
+int before_ms;
 int w_ms = 0;
 
 int draw_ms = millis();
@@ -40,8 +40,9 @@ int start_ms = 0;
 int goal_ms = 0;
 
 void setup(){
+  if(DEBUG) println(Serial.list());
   
-  myPort = new Serial(this, "/dev/tty.usbmodem411", 9600);
+  //myPort = new Serial(this, "/dev/tty.usbmodem411", 9600);
   queue = new ArrayDeque<Integer>();
   
   background(BG_COLOR);
@@ -59,14 +60,18 @@ void draw(){
   int ms = millis();
   if(draw_ms + DISPLAY_DELAY_TIME > ms) return;
   draw_ms = ms;
-  
+
+  if(before_ms + DISPLAY_DELAY_TIME < ms){  
+      w_ms = ms;
+  }
+    
   drawTime(time_m, time_s, time_ms, queue.size());
-  drawWatch(ms);
-  
+  drawWatch();
+
 }
 
 void start_sw(String ms_string){
-  println("S");
+  
   int ms = millis();
   if(start_ms + START_DELAY_TIME > ms) return;
   start_ms = ms;
@@ -77,10 +82,9 @@ void start_sw(String ms_string){
   } else {
     int start_ms = int(ms_string);
     queue.add(start_ms);
-    println("START" + ms_string);
+    if(DEBUG) println("START" + ms_string);
   }
-  //drawTime(time_m, time_s, time_ms, queue.size());
-  //drawWatch();
+  
 }
 
 void goal_sw(String ms_string){
@@ -94,7 +98,7 @@ void goal_sw(String ms_string){
   } else {
     int goal_ms = int(ms_string);
     goal = int(goal_ms);
-    println("GOAL" + goal_ms);
+    if(DEBUG) println("GOAL" + goal_ms);
   }
   
   try{
@@ -115,8 +119,7 @@ void goal_sw(String ms_string){
   } catch(Exception e){
     time_m = time_s = time_ms = 0;
   }
-  //drawTime(time_m, time_s, time_ms, queue.size());
-  //drawWatch();
+  
 }
 
 void serialEvent(Serial p) {
@@ -127,14 +130,15 @@ void serialEvent(Serial p) {
     String command = data.substring(0, 1);
     String time_val = data.substring(1);
     
-    //println(cmd);
+    if(DEBUG) println(command);
+    
     if(command.equals("S")){
       start_sw(time_val);
-      //println("start" + val);
+      if(DEBUG) println("start" + time_val);
       
     } else if(command.equals("G")){
       goal_sw(time_val);
-      //println("goal" + val);
+      if(DEBUG) println("goal" + time_val);
       
     } else if(command.equals("T")){
       w_ms = int(time_val);
@@ -157,29 +161,28 @@ void mousePressed(){
   }
 }
 
-void drawWatch(int now){
+void drawWatch(){
 
   if(!USE_WATCH) return;
   
   int l_ms;
   if(queue.size() > 0){
-     l_ms = w_ms - queue.element(); 
+    l_ms = w_ms - queue.element(); 
   } else {
     l_ms = millisecond;
   }
-   //println(now + " - " + queue.element() + " = " + (now - queue.element()));
    
-   int ls = l_ms / 1000;
-   int w_time_m = ls / 60;
-   int w_time_s = ls % 60;
-   int w_time_ms = l_ms % 1000;
+  int ls = l_ms / 1000;
+  int w_time_m = ls / 60;
+  int w_time_s = ls % 60;
+  int w_time_ms = l_ms % 1000;
     
    fill(0,0,0);
    rect(
-   20,
-   height / 1.4,
-   250,
-   250
+     20,
+     height / 1.4,
+     250,
+     250
    );
    
    fill(255,255,255);
@@ -196,9 +199,9 @@ void drawWatch(int now){
 }
 
 void drawTime(int time_m, int time_s, int time_ms, int running){
+
   background(#000000);
 
-  //println(nf(time_m, 2) + nf(time_s, 2) + nf(time_ms, 3) + "queue" + nf(running,2) );
   float fontSize = height / 2.2;
   PFont fn = createFont(FONT_NAME, fontSize);
   fill(#FFFFFF);
