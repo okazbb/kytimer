@@ -20,7 +20,22 @@ PC側(Processing) Server/Processing/Processing.pde
 
 ====
 
-type2 ストップウォッチ型
+type2 LED表示型
+
+ハード構成
+マイコン-光電センサ1台
+
+特徴
+LEDでタイム表示
+PC無しで動作
+
+使用ソース
+STM32Nucleo Nucleo/led/main.cpp
+https://developer.mbed.org/users/okazbb/code/KYTIMER2/  
+
+====
+
+type3 ストップウォッチ型
 
 ハード構成  
 ストップウォッチ-マイコン-光電センサ1台  
@@ -30,4 +45,6 @@ type2 ストップウォッチ型
 マイコンはディレイタイマ・リレーとしての動作のみ  
 
 使用ソース  
-マイコン側(STM32Nucleo) Nucleo/main.cpp
+STM32Nucleo Nucleo/stopwatch/main.cpp  
+https://developer.mbed.org/users/okazbb/code/KYTIMER3/  
+
